@@ -2,7 +2,9 @@
 Implement an SNMP Agent with COM Interface support
 
 ## running
+```
 $ python3 snmp_com.py
+```
 
 ## testing
 After running the snmp_com, which is the agent, do:
