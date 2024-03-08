@@ -4,6 +4,9 @@ from pysnmp.entity.rfc3413 import cmdrsp, context
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.proto.api import v2c
 
+
+oid_base = (1,3,6,1,4,1,13267)
+
 # Create SNMP engine
 snmpEngine = engine.SnmpEngine()
 
@@ -22,7 +25,7 @@ config.addTransport(
 config.addV1System(snmpEngine, 'my-area', 'public')
 
 # Allow read MIB access for this user / securityModels at VACM
-config.addVacmUser(snmpEngine, 2, 'my-area', 'noAuthNoPriv', (1, 3, 6, 5))
+config.addVacmUser(snmpEngine, 2, 'my-area', 'noAuthNoPriv', oid_base)
 
 # Create an SNMP context
 snmpContext = context.SnmpContext(snmpEngine)
@@ -37,17 +40,48 @@ MibScalar, MibScalarInstance = mibBuilder.importSymbols(
 
 
 class MyStaticMibScalarInstance(MibScalarInstance):
-    # noinspection PyUnusedLocal,PyUnusedLocal
     def getValue(self, name, idx, **context):
-        print(f"Received: {name}")
-        response_message = f"Answer to {name}"
+        name_str = str(name)
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 1, 2, 0)" in name_str:
+            received_message = "utcType2AppVersion"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 2, 9)" in name_str:
+            received_message = "utcType2ReplyByExceptionKeepAlive"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 1, 0)" in name_str:
+            received_message = "utcType2OperationMode"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 5, 9740, 7)" in name_str:
+            received_message = "utcControlFn"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 6)" in name_str:
+            received_message = "utcControlSFn"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 4)" in name_str:
+            received_message = "objReceiveConfigbyUDP"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 5, 3)" in name_str:
+            received_message = "objKeepAliveProgramacao"
+
+        if "(1, 3, 6, 1, 4, 1, 13267, 5, 12)" in name_str:
+            received_message = "objIdEquipamento"
+
+        print(f"Received: {name_str} = {received_message}")
+
+        response_message = f"You sent {name} = {received_message}"
         return self.getSyntax().clone(response_message)
 
 
 mibBuilder.exportSymbols(
-    '__MY_MIB', MibScalar((1, 3, 6, 5, 1), v2c.OctetString()),
-    MyStaticMibScalarInstance((1, 3, 6, 5, 1), (0,), v2c.OctetString()),
-    MyStaticMibScalarInstance((1, 3, 6, 5, 1), (1,), v2c.OctetString())
+    '__MY_MIB', MibScalar(oid_base, v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (3,2,1,2,0,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (3,2,2,9,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (3,2,4,1,0,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (3,2,4,2,1,5,9740,7,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (3,2,4,2,1,6,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (4,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (5,3,), v2c.OctetString()),
+    MyStaticMibScalarInstance(oid_base, (5,12,), v2c.OctetString())    
 )
 
 # --- end of Managed Object Instance initialization ----
