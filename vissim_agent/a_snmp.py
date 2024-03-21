@@ -75,7 +75,7 @@ agent.mib_builder.exportSymbols(
     MyStaticMibScalarInstance(agent.oid_base, (3,2,4,2,1,6,), v2c.OctetString()),
     MyStaticMibScalarInstance(agent.oid_base, (4,), v2c.OctetString()),
     MyStaticMibScalarInstance(agent.oid_base, (5,3,), v2c.OctetString()),
-    MyStaticMibScalarInstance(agent.oid_base, (5,12,), v2c.OctetString())    
+    MyStaticMibScalarInstance(agent.oid_base, (5,12,), v2c.OctetString())
 )
 
 # Register SNMP Applications at the SNMP engine for particular SNMP context
@@ -83,3 +83,12 @@ cmdrsp.GetCommandResponder(agent.snmp_engine, agent.snmp_context)
 cmdrsp.NextCommandResponder(agent.snmp_engine, agent.snmp_context)
 cmdrsp.BulkCommandResponder(agent.snmp_engine, agent.snmp_context)
 
+def run_snmp_thread():
+    agent = agent_class()
+
+    agent.snmp_engine.transportDispatcher.jobStarted(1)
+
+    try:
+        agent.snmp_engine.transportDispatcher.runDispatcher()
+    finally:
+        agent.snmp_engine.transportDispatcher.closeDispatcher()

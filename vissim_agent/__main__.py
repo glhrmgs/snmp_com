@@ -1,11 +1,10 @@
 from vissim_agent.a_class import *
 from vissim_agent.a_snmp import *
+import threading, time
 
-agent = agent_class()
+t = threading.Thread(target=run_snmp_thread)
+t.start()
 
-agent.snmp_engine.transportDispatcher.jobStarted(1)
-try:
-    agent.snmp_engine.transportDispatcher.runDispatcher()
-
-finally:
-    agent.snmp_engine.transportDispatcher.closeDispatcher()
+print("marrapaiz")
+while True:
+    time.sleep(1)
