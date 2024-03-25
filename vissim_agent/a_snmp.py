@@ -53,9 +53,11 @@ class MyStaticMibScalarInstance(agent.mib_scalar_instance):
             received_message = "utcControlSFn"
 
         if "(1, 3, 6, 1, 4, 1, 13267, 4)" in name_str:
+            agent.receive_conf_by_udp = True
             received_message = "objReceiveConfigbyUDP"
 
         if "(1, 3, 6, 1, 4, 1, 13267, 5, 3)" in name_str:
+            agent.keep_alive_prog = True
             received_message = "objKeepAliveProgramacao"
 
         if "(1, 3, 6, 1, 4, 1, 13267, 5, 12)" in name_str:
@@ -84,8 +86,6 @@ cmdrsp.NextCommandResponder(agent.snmp_engine, agent.snmp_context)
 cmdrsp.BulkCommandResponder(agent.snmp_engine, agent.snmp_context)
 
 def run_snmp_thread():
-    agent = agent_class()
-
     agent.snmp_engine.transportDispatcher.jobStarted(1)
 
     try:
