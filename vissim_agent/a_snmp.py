@@ -36,36 +36,36 @@ agent.mib_scalar, agent.mib_scalar_instance = agent.mib_builder.importSymbols(
 
 class MyStaticMibScalarInstance(agent.mib_scalar_instance):
     def getValue(self, name, idx, **context):
-        name_str = str(name)
-        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 1, 2, 0)" in name_str:
+        oid_str = str(name)
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 1, 2, 0)" in oid_str:
             received_message = "utcType2AppVersion"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 2, 9)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 2, 9)" in oid_str:
             received_message = "utcType2ReplyByExceptionKeepAlive"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 1, 0)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 1, 0)" in oid_str:
             received_message = "utcType2OperationMode"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 5, 9740, 7)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 5, 9740, 7)" in oid_str:
             received_message = "utcControlFn"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 6)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 3, 2, 4, 2, 1, 6)" in oid_str:
             received_message = "utcControlSFn"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 4)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 4)" in oid_str:
             agent.receive_conf_by_udp = True
             received_message = "objReceiveConfigbyUDP"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 5, 3)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 5, 3)" in oid_str:
             agent.keep_alive_prog = True
             received_message = "objKeepAliveProgramacao"
 
-        if "(1, 3, 6, 1, 4, 1, 13267, 5, 12)" in name_str:
+        if "(1, 3, 6, 1, 4, 1, 13267, 5, 12)" in oid_str:
             received_message = "objIdEquipamento"
 
-        print(f"Received: {name_str} = {received_message}")
+        print(f"SNMP COM: received {received_message} \t {oid_str}")
 
-        response_message = f"You sent {received_message}"
+        response_message = f" SNMP COM: received {received_message}"
         return self.getSyntax().clone(response_message)
 
 agent.mib_builder.exportSymbols(
@@ -96,3 +96,4 @@ def run_snmp_thread():
 def start_snmp_thread():
     snmp_thread = threading.Thread(target=run_snmp_thread)
     snmp_thread.start()
+    print("SNMP COM: agent started")

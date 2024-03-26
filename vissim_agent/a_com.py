@@ -19,9 +19,9 @@ def start_vissim_thread():
     if not agent.client_connected:
         my_os = platform.system()
         if "Windows" in my_os:
-            print(f"Starting Vissim on {my_os}")
+            print(f"SNMP COM: starting Vissim on {my_os}")
             dispatch_vissim()
             agent.client_connected = True
         else:
-            print(f"Client connected on {my_os}")
+            print(f"SNMP COM: client connected on {my_os}")
             agent.client_connected = True
