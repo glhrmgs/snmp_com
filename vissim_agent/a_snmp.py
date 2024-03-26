@@ -1,10 +1,10 @@
-import sys
 from pysnmp.entity import engine, config
 from pysnmp.entity.rfc3413 import cmdrsp, context
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.proto.api import v2c
 from vissim_agent.a_class import *
 from vissim_agent.a_snmp import *
+import sys, threading
 
 agent = agent_class()
 
@@ -92,3 +92,7 @@ def run_snmp_thread():
         agent.snmp_engine.transportDispatcher.runDispatcher()
     finally:
         agent.snmp_engine.transportDispatcher.closeDispatcher()
+
+def start_snmp_thread():
+    snmp_thread = threading.Thread(target=run_snmp_thread)
+    snmp_thread.start()

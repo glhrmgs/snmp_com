@@ -18,6 +18,9 @@ class agent_class:
     keep_alive_prog = None
     receive_conf_by_udp = None
 
+    # Vissim
+    client_connected = False
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
