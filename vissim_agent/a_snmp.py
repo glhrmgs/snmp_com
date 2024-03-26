@@ -1,9 +1,11 @@
-from pysnmp.entity import engine, config
+from pysnmp.entity import engine
+from pysnmp.entity import config as psconfig
 from pysnmp.entity.rfc3413 import cmdrsp, context
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.proto.api import v2c
 from vissim_agent.a_class import *
 from vissim_agent.a_snmp import *
+from vissim_agent.a_config import *
 import sys, threading
 
 agent = agent_class()
@@ -12,17 +14,21 @@ agent.snmp_engine = engine.SnmpEngine()
 
 # Transport setup
 # UDP over IPv4
-config.addTransport(
+agent_ip = config['snmp']['ip']
+agent_port = config['snmp']['port']
+agent_address = (agent_ip, agent_port)
+
+psconfig.addTransport(
     agent.snmp_engine,
     udp.domainName,
-    udp.UdpTransport().openServerMode(('0.0.0.0', 10161))
+    udp.UdpTransport().openServerMode(agent_address)
 )
 
 # SNMPv1 Setup
-config.addV1System(agent.snmp_engine, 'my-area', agent.snmp_community)
+psconfig.addV1System(agent.snmp_engine, 'my-area', agent.snmp_community)
 
 # SNMPv2c Setup
-config.addVacmUser(agent.snmp_engine, 2, 'my-area', 'noAuthNoPriv', agent.oid_base)
+psconfig.addVacmUser(agent.snmp_engine, 2, 'my-area', 'noAuthNoPriv', agent.oid_base)
 
 # Create an SNMP context
 agent.snmp_context = context.SnmpContext(agent.snmp_engine)
