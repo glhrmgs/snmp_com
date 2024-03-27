@@ -2,31 +2,29 @@ from vissim_agent.a_class import *
 from vissim_agent.a_config import *
 import platform, threading, time
 
-my_os = platform.system()
-if "Windows" in my_os:
-    import win32com.client as com
-    import pythoncom
-
 agent = agent_class()
 
 def dispatch_vissim():
-    pythoncom.CoInitialize()
+    import win32com.client as com
+
     vissim_version = config['vissim']['version']
     vissim = com.Dispatch(vissim_version)
+
+    vissim_micromodel = config['vissim']['micromodel']
+    print(f"SNMP COM: opening {vissim_micromodel}")
+    vissim.LoadNet(vissim_micromodel)
+
+    print(f"SNMP COM: warming up model")
 
     while True:
         time.sleep(1)
 
-def start_com_thread():
+def vissim_thread():
     com_thread = threading.Thread(target=dispatch_vissim)
-    com_thread.start()    
+    com_thread.start()
 
-def start_vissim_thread():
-    if not agent.client_connected:
-        if "Windows" in my_os:
-            print(f"SNMP COM: starting Vissim on {my_os}")
-            dispatch_vissim()
-            agent.client_connected = True
-        else:
-            print(f"SNMP COM: client connected on {my_os}")
-            agent.client_connected = True
+def start_com_thread():
+    my_os = platform.system()
+    if "Windows" in my_os:
+        print(f"SNMP COM: starting Vissim")
+        vissim_thread()
