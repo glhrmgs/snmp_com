@@ -1,7 +1,9 @@
-i = 0
+from vissim_agent.a_class import *
+
+agent = agent_class()
 
 def start_debugger():
-    if i == 0:
+    if not agent.client_connected:
         print("SNMP COM: debugger started")
-        i = 1
+        agent.client_connected = True
     return

@@ -12,4 +12,6 @@ start_com_thread()
 while True:
     if agent.keep_alive_prog and agent.receive_conf_by_udp:
         start_debugger()
+        agent.keep_alive_prog = False
+        agent.receive_conf_by_udp = False
     time.sleep(1)

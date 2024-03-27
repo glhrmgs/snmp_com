@@ -6,7 +6,7 @@ class agent_class:
     snmp_config = None
     snmp_engine = None
     snmp_context = None
-    snmp_community = "public"
+    snmp_community = None
 
     # OID/MIB related
     oid_base = (1,3,6,1,4,1,13267)

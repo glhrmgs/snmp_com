@@ -1,5 +1,5 @@
 from pysnmp.entity import engine
-from pysnmp.entity import config as psconfig
+from pysnmp.entity import config as pysnmp_config
 from pysnmp.entity.rfc3413 import cmdrsp, context
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.proto.api import v2c
@@ -12,28 +12,24 @@ agent = agent_class()
 
 agent.snmp_engine = engine.SnmpEngine()
 
-# Transport setup
-# UDP over IPv4
-agent_ip = config['snmp']['ip']
-agent_port = config['snmp']['port']
+agent_ip = config["snmp"]["ip"]
+agent_port = config["snmp"]["port"]
 agent_address = (agent_ip, agent_port)
 
-psconfig.addTransport(
+pysnmp_config.addTransport(
     agent.snmp_engine,
     udp.domainName,
     udp.UdpTransport().openServerMode(agent_address)
 )
 
+agent.snmp_community = config["snmp"]["community"]
 # SNMPv1 Setup
-psconfig.addV1System(agent.snmp_engine, 'my-area', agent.snmp_community)
+pysnmp_config.addV1System(agent.snmp_engine, "my-area", agent.snmp_community)
 
 # SNMPv2c Setup
-psconfig.addVacmUser(agent.snmp_engine, 2, 'my-area', 'noAuthNoPriv', agent.oid_base)
+pysnmp_config.addVacmUser(agent.snmp_engine, 2, "my-area", "noAuthNoPriv", agent.oid_base)
 
-# Create an SNMP context
 agent.snmp_context = context.SnmpContext(agent.snmp_engine)
-
-
 agent.mib_builder = agent.snmp_context.getMibInstrum().getMibBuilder()
 
 agent.mib_scalar, agent.mib_scalar_instance = agent.mib_builder.importSymbols(
